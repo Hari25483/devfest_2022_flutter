@@ -4,6 +4,8 @@ import 'package:devfest_2022_flutter/widgets/product_item.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../data/cart.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -12,6 +14,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late final Cart _cart;
+  @override
+  void initState() {
+    super.initState();
+    _cart = Cart();
+  }
+
+  void OnaddItem(Item item) {
+    setState(() {
+      _cart.addItem(item);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,9 +34,11 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('GDG Store'),
         actions: [
           IconButton(
-            onPressed: () => context.push('/cart'),
+            onPressed: () {
+              context.push('/cart');
+            },
             icon: Badge(
-              badgeContent: Text('0'),
+              badgeContent: Text(_cart.noOfItems.toString()),
               child: const Icon(Icons.shopping_cart),
             ),
           ),
@@ -32,7 +49,10 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.symmetric(vertical: 10.0),
           itemCount: listOfAvailableItems.length,
           itemBuilder: (context, index) {
-            return ItemTile(item: listOfAvailableItems.elementAt(index));
+            return ItemTile(
+              item: listOfAvailableItems.elementAt(index),
+              onAddItem: OnaddItem,
+            );
           },
         ),
       ),
